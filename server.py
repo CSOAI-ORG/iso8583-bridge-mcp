@@ -12,6 +12,22 @@ import re
 
 mcp = FastMCP("ISO 8583 Bridge", instructions="Bridge ISO 8583 card-payment messages to ONE OS — parse, map, govern (PCI-DSS).")
 
+# ── SIGIL: every governed action → one signed hash-chained hop (SIGIL_LOG unifies all layers) ──
+import hashlib as _hl, time as _t, json as _j, os as _os
+_SIGIL_LOG = _os.environ.get("SIGIL_LOG", _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "bridge_sigil.log"))
+def _sigil(op, body):
+    try:
+        prev = ""
+        if _os.path.exists(_SIGIL_LOG):
+            with open(_SIGIL_LOG) as f:
+                ls = f.readlines()
+                if ls: prev = _j.loads(ls[-1]).get("digest", "")
+        ts = int(_t.time()); dg = _hl.sha256(f"{op}|{ts}|{prev[:8]}|{body}".encode()).hexdigest()[:16]
+        _os.makedirs(_os.path.dirname(_SIGIL_LOG), exist_ok=True)
+        with open(_SIGIL_LOG, "a") as f: f.write(_j.dumps({"ts": ts, "op": op, "body": body, "prev_digest": prev, "digest": dg}) + "\n")
+        return dg
+    except Exception: return ""
+
 MTI = {
     "0100": "Authorization Request", "0110": "Authorization Response",
     "0200": "Financial Request", "0210": "Financial Response",
@@ -66,6 +82,7 @@ def map_to_modern(message: str) -> Dict[str, Any]:
 @mcp.tool()
 def govern_card(message: str) -> Governance:
     """Governance: card-data + scheme surface — PCI-DSS, PAN handling (attestable for CSOAI)."""
+    _sigil("G", "iso8583|govern_card")
     p = parse_iso8583(message)
     flags = ["Never log/store full PAN or track data — PCI-DSS Req 3 (mask/tokenise)"]
     if p.is_financial:
