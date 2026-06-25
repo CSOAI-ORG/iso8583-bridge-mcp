@@ -1,0 +1,8 @@
+# iso8583-bridge-mcp
+# CSOAI Layer-0 legacy-bridge. Bridge ISO 8583 card-payment messages to ONE OS — parse, map, govern (PCI-DSS / scheme rules).
+
+## Install
+```bash
+pip install -e .
+python server.py
+```
