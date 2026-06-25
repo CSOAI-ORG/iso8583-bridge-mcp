@@ -1,7 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "io.github.CSOAI-ORG/iso8583-bridge-mcp",
-  "description": "Bridge ISO 8583 card-payment messages to ONE OS — parse, map, govern (PCI-DSS / scheme rules).",
+  "description": "Bridge ISO 8583 card-payment messages to ONE OS \u2014 parse, map, govern (PCI-DSS / scheme rules).",
   "version": "0.1.0",
-  "packages": [{"registry_type": "pypi", "identifier": "iso8583-bridge-mcp", "version": "0.1.0", "transport": {"type": "stdio"}}]
+  "packages": [
+    {
+      "identifier": "iso8583-bridge-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "registryType": "pypi",
+      "runtimeHint": "python"
+    }
+  ]
 }
